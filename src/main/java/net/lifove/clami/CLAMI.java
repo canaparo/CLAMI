@@ -24,7 +24,7 @@ import weka.core.Instances;
  */
 public class CLAMI {
 	
-	String dataFilePath;
+	String dataFilePaths;
 	String labelName;
 	String posLabelValue;
 	double percentileCutoff = 50;
@@ -64,28 +64,32 @@ public class CLAMI {
 			}
 			
 			// load an arff file
-			Instances instances = Utils.loadArff(dataFilePath, labelName);
+			String[] dataFilePathsArray = dataFilePaths.split(" ");
+			for(int i = 0; i<dataFilePathsArray.length; i++) {
+				System.out.println("CLAMI: elaborazione file " + dataFilePathsArray[i]);
+				Instances instances = Utils.loadArff(dataFilePathsArray[i], labelName);
 			
-			if (instances !=null){
-				double unit = (double) 100/(instances.numInstances());
-				//double unitFloor = Math.floor(unit);
-				double unitCeil = Math.ceil(unit);
+				if (instances !=null){
+					double unit = (double) 100/(instances.numInstances());
+					//double unitFloor = Math.floor(unit);
+					double unitCeil = Math.ceil(unit);
 				
-				// TODO need to check how median is computed
-				if (unit >= 1 && 100-unitCeil < percentileCutoff){
-					System.err.println("Cutoff percentile must be 0 < and <=" + (100-unitCeil));
-					return;
-				}
+					// TODO need to check how median is computed
+					if (unit >= 1 && 100-unitCeil < percentileCutoff){
+						System.err.println("Cutoff percentile must be 0 < and <=" + (100-unitCeil));
+						return;
+					}
 				
-				if (experimental==null || experimental.equals("")){
-					// do prediction
-					prediction(instances,posLabelValue,false);
-				}else{
-					experiment(instances,posLabelValue);
+					if (experimental==null || experimental.equals("")){
+						// do prediction
+						prediction(instances,posLabelValue,false);
+					}else{
+						experiment(instances,posLabelValue, dataFilePathsArray[i]);
+					}
 				}
 			}
 		}
-	}
+		}
 	
 	private boolean checkExperimentalOption(String expOpt) {	
 		Pattern pattern=Pattern.compile("^[0-9]+:[0-9]");
@@ -93,7 +97,7 @@ public class CLAMI {
 		return m.find();
 	}
 
-	private void experiment(Instances instances, String posLabelValue) {
+	private void experiment(Instances instances, String posLabelValue, String dataFilePath) {
 		
 		String[] splitOptions = experimental.split(":");
 		int folds = Integer.parseInt(splitOptions[0]);
@@ -208,7 +212,7 @@ public class CLAMI {
 
 			CommandLine cmd = parser.parse(options, args);
 
-			dataFilePath = cmd.getOptionValue("f");
+			dataFilePaths = cmd.getOptionValue("f");
 			labelName = cmd.getOptionValue("l");
 			posLabelValue = cmd.getOptionValue("p");
 			if(cmd.getOptionValue("c") != null)

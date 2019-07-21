@@ -22,7 +22,7 @@ public class CLAMITest {
 		runner.runner(args);
 		
 		assert(runner.forCLAMI);
-		assertEquals(runner.dataFilePath,args[1]);
+		assertEquals(runner.dataFilePaths,args[1]);
 		assertEquals(runner.labelName,args[3]);
 		assertEquals(runner.posLabelValue,args[5]);
 		assertEquals(runner.forCLAMI,true);
@@ -129,7 +129,7 @@ public class CLAMITest {
 		args[1] = "";
 		runner = new CLAMI();
 		runner.runner(args);
-		assertEquals(runner.dataFilePath,"");
+		assertEquals(runner.dataFilePaths,"");
 		assertEquals(runner.labelName,"label");
 		assertEquals(runner.posLabelValue,"buggy");
 	}
