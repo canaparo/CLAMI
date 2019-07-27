@@ -71,7 +71,7 @@ public class Utils {
 		}
 		
 		if (TP+TN+FP+FN>0)
-			printEvaluationResult(TP, TN, FP, FN, experimental);
+			printEvaluationResult(TP, TN, FP, FN, -1, experimental);
 		else if(suppress)
 			System.out.println("No labeled instances in the arff file. To see detailed prediction results, try again without the suppress option  (-s,--suppress)");
 	}
@@ -83,7 +83,7 @@ public class Utils {
 	 * @param fP
 	 * @param fN
 	 */
-	private static void printEvaluationResult(int tP, int tN, int fP, int fN, boolean experimental) {
+	private static void printEvaluationResult(int tP, int tN, int fP, int fN, double kappaResult, boolean experimental) {
 		
 		double precision = (double)tP/(tP+fP);
 		double recall = (double)tP/(tP+fN);
@@ -98,6 +98,7 @@ public class Utils {
 			System.out.println("Precision: " + precision);
 			System.out.println("Recall: " + recall);
 			System.out.println("F1: " + f1);
+			System.out.println("kappa: " + kappaResult);
 		}else{
 			System.out.print(precision + "," + recall + "," + f1);
 		}
@@ -251,9 +252,10 @@ public class Utils {
 				
 				Evaluation eval = new Evaluation(trainingInstancesByCLAMI);
 				eval.evaluateModel(classifier, newTestInstances);
+				double kappaResult = eval.kappa();
 				
 				if (TP+TN+FP+FN>0){
-					printEvaluationResult(TP, TN, FP, FN, experimental);
+					printEvaluationResult(TP, TN, FP, FN, kappaResult, experimental);
 					// print AUC value
 					if(!experimental)
 						System.out.println("AUC: " + eval.areaUnderROC(newTestInstances.classAttribute().indexOfValue(positiveLabel)));
