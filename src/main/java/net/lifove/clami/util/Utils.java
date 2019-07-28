@@ -224,6 +224,7 @@ public class Utils {
 			try {
 				Classifier classifier = (Classifier) weka.core.Utils.forName(Classifier.class, mlAlgorithm, null);
 				classifier.buildClassifier(trainingInstancesByCLAMI);
+				String[] instanceNames = Utils.instanceNames("");
 				
 				// Print CLAMI results
 				int TP=0, FP=0,TN=0, FN=0;
@@ -392,6 +393,29 @@ public class Utils {
 		}
 
 		return instances;
+	}
+	
+	/**
+	 * Construct an array of class names to be inserted in the output file. 
+	 * 
+	 * @param path arff file path
+	 * @return Instances
+	 */
+	public static String[] instanceNames(String path){
+		BufferedReader reader;
+		ArrayList<String> names = new ArrayList<>();
+		try {
+			reader = new BufferedReader(new FileReader(path));
+			String name = reader.readLine();
+			names.add(name);
+			reader.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("Data file, " +path + ", does not exist. Please, check the path again!");
+		} catch (IOException e) {
+			System.err.println("I/O error! Please, try again!");
+		}
+
+		return (String[]) names.toArray();
 	}
 	
 	/**
