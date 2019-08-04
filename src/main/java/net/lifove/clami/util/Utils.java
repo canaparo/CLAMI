@@ -170,8 +170,8 @@ public class Utils {
 	 * @param instancesByCLA
 	 * @param positiveLabel
 	 */
-	public static void getCLAMIResult(Instances testInstances, Instances instances, String positiveLabel,double percentileCutoff,boolean suppress,String mlAlg) {
-		getCLAMIResult(testInstances,instances,positiveLabel,percentileCutoff,suppress,false,mlAlg); //no experimental as default
+	public static void getCLAMIResult(Instances testInstances, Instances instances, String[] instanceNames, String positiveLabel,double percentileCutoff,boolean suppress,String mlAlg) {
+		getCLAMIResult(testInstances,instances, instanceNames, positiveLabel,percentileCutoff,suppress,false,mlAlg); //no experimental as default
 	}
 	
 	/**
@@ -180,7 +180,7 @@ public class Utils {
 	 * @param instancesByCLA
 	 * @param positiveLabel
 	 */
-	public static void getCLAMIResult(Instances testInstances, Instances instances, String positiveLabel,double percentileCutoff, boolean suppress, boolean experimental, String mlAlg) {
+	public static void getCLAMIResult(Instances testInstances, Instances instances, String[] instanceNames, String positiveLabel,double percentileCutoff, boolean suppress, boolean experimental, String mlAlg) {
 		
 		String mlAlgorithm = mlAlg!=null && !mlAlg.equals("")?mlAlg:"weka.classifiers.functions.Logistic";
 		System.out.println("Used algorithm " + mlAlgorithm);
@@ -224,14 +224,13 @@ public class Utils {
 			try {
 				Classifier classifier = (Classifier) weka.core.Utils.forName(Classifier.class, mlAlgorithm, null);
 				classifier.buildClassifier(trainingInstancesByCLAMI);
-				String[] instanceNames = Utils.instanceNames("");
 				
 				// Print CLAMI results
 				int TP=0, FP=0,TN=0, FN=0;
 				for(int instIdx = 0; instIdx < newTestInstances.numInstances(); instIdx++){
 					double predictedLabelIdx = classifier.classifyInstance(newTestInstances.get(instIdx));
-					if(!suppress)
-						System.out.println("CLAMI: Instance " + (instIdx+1) + " predicted as, " + 
+					if(!suppress && instanceNames != null)
+						System.out.println("CLAMI: Instance " + (instIdx+1) + " name: " + instanceNames[instIdx] + " predicted as, " + 
 							newTestInstances.classAttribute().value((int)predictedLabelIdx)	+
 							//((newTestInstances.classAttribute().indexOfValue(positiveLabel))==predictedLabelIdx?"buggy":"clean") +
 							", (Actual class: " + Utils.getStringValueOfInstanceLabel(newTestInstances,instIdx) + ") ");
