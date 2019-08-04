@@ -406,8 +406,10 @@ public class Utils {
 		ArrayList<String> names = new ArrayList<>();
 		try {
 			reader = new BufferedReader(new FileReader(path));
-			String name = reader.readLine();
-			names.add(name);
+			String name = null;
+			while((name = reader.readLine()) != null) {
+				names.add(name);
+			}
 			reader.close();
 		} catch (FileNotFoundException e) {
 			System.err.println("Data file, " +path + ", does not exist. Please, check the path again!");
@@ -415,7 +417,7 @@ public class Utils {
 			System.err.println("I/O error! Please, try again!");
 		}
 
-		return (String[]) names.toArray();
+		return (String[]) names.toArray(new String[names.size()]);
 	}
 	
 	/**
@@ -503,5 +505,12 @@ public class Utils {
 		}
 
 		return newInstances;
+	}
+	
+	public static void main(String args[]) {
+		String[] names = instanceNames("C:\\Users\\marco\\clami\\clamigit\\src\\main\\java\\net\\lifove\\clami\\util\\trainset_1004_60_stepB3_id_nomeIstanze.csv");
+		for(int i = 0; i<names.length; i++) {
+			System.out.println("nome instanza: " + names[i]);
+		}
 	}
 }
